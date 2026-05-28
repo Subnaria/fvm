@@ -5,17 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Compta Tomates — FiveM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
   <header>
     <div class="header-inner">
-      <div class="logo">🍅 COMPTA<span>FiveM</span></div>
+      <div class="logo">
+        <span class="logo-icon">🍅</span>
+        <span class="logo-text">COMPTA<em>FiveM</em></span>
+      </div>
       <div class="header-actions">
-        <div class="save-status" id="saveStatus">—</div>
-        <button class="btn-header" id="btnReset">↺ Reset</button>
+        <div class="save-status" id="saveStatus">
+          <span class="save-dot"></span>
+          <span id="saveStatusText">—</span>
+        </div>
+        <button class="btn-header btn-reset" id="btnReset">↺ Reset</button>
       </div>
     </div>
   </header>
@@ -23,60 +32,73 @@
   <main>
 
     <!-- COLONNE GAUCHE -->
-    <div class="col">
+    <div class="col col-left">
 
       <!-- REVENUS -->
-      <section class="card" id="card-revenus">
-        <div class="card-label">REVENUS BRUTS</div>
+      <section class="card card-revenus" id="card-revenus">
+        <div class="card-eyebrow">REVENUS BRUTS</div>
         <div class="card-title">Argent tomates</div>
 
         <div class="input-group">
-          <label>Argent sale (avant impôts)</label>
+          <label>Argent sale <span class="label-hint">(avant déclaration)</span></label>
           <div class="input-row">
+            <span class="input-prefix">€</span>
             <input type="number" id="argentBrut" placeholder="0" min="0" />
-            <span class="unit">€</span>
           </div>
         </div>
 
+        <div class="divider"></div>
+
         <div class="result-row">
-          <span class="result-label">Déclaration (50%)</span>
+          <span class="result-label">
+            <span class="result-dot dot-red"></span>
+            Déclaration (40%)
+          </span>
           <span class="result-value red" id="impots">— €</span>
         </div>
-        <div class="result-row highlight">
-          <span class="result-label">Argent net récupéré</span>
+        <div class="result-row result-highlight">
+          <span class="result-label">
+            <span class="result-dot dot-green"></span>
+            Argent net récupéré
+          </span>
           <span class="result-value green" id="argentNet">— €</span>
         </div>
       </section>
 
       <!-- BÉNÉFICE -->
-      <section class="card" id="card-benef">
-        <div class="card-label">RÉSULTAT</div>
+      <section class="card card-benef" id="card-benef">
+        <div class="card-eyebrow">RÉSULTAT FINAL</div>
         <div class="card-title">Bénéfice net</div>
 
         <div class="benef-display">
-          <span id="benefMontant">— €</span>
+          <div class="benef-amount" id="benefMontant">— €</div>
+          <div class="benef-badge" id="benefBadge">—</div>
         </div>
 
         <div class="benef-details">
           <div class="benef-row">
-            <span>Revenus nets</span>
-            <span id="detailRevenu" class="mono">— €</span>
+            <span class="benef-row-label">Revenus nets</span>
+            <span class="benef-row-value green" id="detailRevenu">— €</span>
           </div>
+          <div class="benef-divider"></div>
           <div class="benef-row">
-            <span>Total dépenses</span>
-            <span id="detailDepenses" class="mono">— €</span>
+            <span class="benef-row-label">Total dépenses</span>
+            <span class="benef-row-value red" id="detailDepenses">— €</span>
           </div>
+        </div>
+
+        <div class="profit-bar-wrap">
+          <div class="profit-bar" id="profitBar"></div>
         </div>
       </section>
 
     </div>
 
     <!-- COLONNE DROITE -->
-    <div class="col">
+    <div class="col col-right">
 
-      <!-- DÉPENSES -->
-      <section class="card" id="card-depenses">
-        <div class="card-label">DÉPENSES</div>
+      <section class="card card-depenses" id="card-depenses">
+        <div class="card-eyebrow">DÉPENSES</div>
         <div class="card-title">Suivi des coûts</div>
 
         <!-- Produit -->
@@ -87,12 +109,28 @@
               <div class="depense-name">Produit <span class="tag">par récolte</span></div>
               <div class="depense-sub">Graines, engrais, etc.</div>
             </div>
-            <div class="depense-total mono" id="total-produit">0 €</div>
+            <div class="depense-right">
+              <div class="depense-total" id="total-produit">0 €</div>
+              <div class="depense-count" id="count-produit">0 ajout(s)</div>
+            </div>
+            <div class="depense-chevron">›</div>
           </div>
           <div class="depense-controls">
-            <div class="input-row">
-              <input type="number" id="input-produit" placeholder="Montant" min="0" />
-              <span class="unit">€</span>
+            <div class="depense-add-row">
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="input-produit" placeholder="Ajouter..." min="0" />
+              </div>
+              <button class="btn-add" data-key="produit">+ Ajouter</button>
+            </div>
+            <div class="depense-history" id="history-produit"></div>
+            <div class="depense-edit-row">
+              <span class="edit-label">Modifier le total :</span>
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="edit-produit" placeholder="Total direct" min="0" />
+              </div>
+              <button class="btn-set" data-key="produit">Définir</button>
             </div>
           </div>
         </div>
@@ -105,13 +143,27 @@
               <div class="depense-name">Tenue <span class="tag">6 400 € / u</span></div>
               <div class="depense-sub">Tous les 2 cycles</div>
             </div>
-            <div class="depense-total mono" id="total-tenue">0 €</div>
+            <div class="depense-right">
+              <div class="depense-total" id="total-tenue">0 €</div>
+              <div class="depense-count" id="count-tenue">0 tenue(s)</div>
+            </div>
+            <div class="depense-chevron">›</div>
           </div>
           <div class="depense-controls tenue-controls">
-            <button class="btn-sq" id="tenueMoins">−</button>
-            <input type="number" id="input-tenue" value="0" min="0" />
-            <button class="btn-sq" id="tenueplus">+</button>
-            <span class="tenue-label">tenues achetées</span>
+            <div class="tenue-counter">
+              <button class="btn-sq" id="tenueMoins">−</button>
+              <input type="number" id="input-tenue" value="0" min="0" />
+              <button class="btn-sq" id="tenueplus">+</button>
+              <span class="tenue-label">tenues achetées</span>
+            </div>
+            <div class="depense-edit-row">
+              <span class="edit-label">Total manuel :</span>
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="edit-tenue" placeholder="Total direct" min="0" />
+              </div>
+              <button class="btn-set" data-key="tenue">Définir</button>
+            </div>
           </div>
         </div>
 
@@ -123,12 +175,28 @@
               <div class="depense-name">Pot de plantation <span class="tag">achat unique</span></div>
               <div class="depense-sub">Investissement de départ</div>
             </div>
-            <div class="depense-total mono" id="total-pot">0 €</div>
+            <div class="depense-right">
+              <div class="depense-total" id="total-pot">0 €</div>
+              <div class="depense-count" id="count-pot">0 ajout(s)</div>
+            </div>
+            <div class="depense-chevron">›</div>
           </div>
           <div class="depense-controls">
-            <div class="input-row">
-              <input type="number" id="input-pot" placeholder="Montant" min="0" />
-              <span class="unit">€</span>
+            <div class="depense-add-row">
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="input-pot" placeholder="Ajouter..." min="0" />
+              </div>
+              <button class="btn-add" data-key="pot">+ Ajouter</button>
+            </div>
+            <div class="depense-history" id="history-pot"></div>
+            <div class="depense-edit-row">
+              <span class="edit-label">Modifier le total :</span>
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="edit-pot" placeholder="Total direct" min="0" />
+              </div>
+              <button class="btn-set" data-key="pot">Définir</button>
             </div>
           </div>
         </div>
@@ -141,20 +209,36 @@
               <div class="depense-name">Autre dépense <span class="tag">divers</span></div>
               <div class="depense-sub">Tout le reste</div>
             </div>
-            <div class="depense-total mono" id="total-autre">0 €</div>
+            <div class="depense-right">
+              <div class="depense-total" id="total-autre">0 €</div>
+              <div class="depense-count" id="count-autre">0 ajout(s)</div>
+            </div>
+            <div class="depense-chevron">›</div>
           </div>
           <div class="depense-controls">
-            <div class="input-row">
-              <input type="number" id="input-autre" placeholder="Montant" min="0" />
-              <span class="unit">€</span>
+            <div class="depense-add-row">
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="input-autre" placeholder="Ajouter..." min="0" />
+              </div>
+              <button class="btn-add" data-key="autre">+ Ajouter</button>
+            </div>
+            <div class="depense-history" id="history-autre"></div>
+            <div class="depense-edit-row">
+              <span class="edit-label">Modifier le total :</span>
+              <div class="input-row input-small">
+                <span class="input-prefix">€</span>
+                <input type="number" id="edit-autre" placeholder="Total direct" min="0" />
+              </div>
+              <button class="btn-set" data-key="autre">Définir</button>
             </div>
           </div>
         </div>
 
         <!-- Total dépenses -->
         <div class="total-depenses">
-          <span>TOTAL DÉPENSES</span>
-          <span class="mono red" id="grandTotalDepenses">0 €</span>
+          <span class="total-label">TOTAL DÉPENSES</span>
+          <span class="total-value red" id="grandTotalDepenses">0 €</span>
         </div>
 
       </section>
@@ -164,8 +248,8 @@
   </main>
 
   <footer>
-    <span>FiveM Compta — 🍅 Tomates</span>
-    <span class="mono" id="footerDate"></span>
+    <span>🍅 FiveM Compta — Tomates</span>
+    <span class="footer-date" id="footerDate"></span>
   </footer>
 
   <div class="toast" id="toast"></div>
